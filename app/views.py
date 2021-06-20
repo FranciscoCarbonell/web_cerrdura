@@ -37,6 +37,28 @@ from . models import Application, UserApplication
     Application wide 404 error handler
 """
 
+class UserApplicationView(ModelView):
+    datamodel = SQLAInterface(UserApplication)
+
+
+class ApplicationView(ModelView):
+    datamodel = SQLAInterface(Application)
+    related_view = [UserApplicationView]
+
+appbuilder.add_view(
+    ApplicationView,
+    "Application",
+    category = "application",
+    category_label = "Application"
+)
+
+appbuilder.add_view(
+    UserApplicationView,
+    "User Application",
+    category = "application",
+)
+
+
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
     return (
