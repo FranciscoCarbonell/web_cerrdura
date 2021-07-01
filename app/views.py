@@ -1,9 +1,10 @@
 from flask import render_template
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_appbuilder import ModelView, ModelRestApi
+from flask_appbuilder import ModelView
+from flask_appbuilder.widgets import ListWidget, ListThumbnail, ListBlock
 
 from . import appbuilder, db
-from . models import Application, UserApplication
+from . models import Application, UserApplication, Device
 
 """
     Create your Model based REST API::
@@ -37,13 +38,22 @@ from . models import Application, UserApplication
     Application wide 404 error handler
 """
 
+
+class DeviceView(ModelView):
+    datamodel = SQLAInterface(Device)
+    list_columns = ['name']
+
+
 class UserApplicationView(ModelView):
     datamodel = SQLAInterface(UserApplication)
+    related_view = [DeviceView]
+    list_columns = ['name', 'user']
 
 
 class ApplicationView(ModelView):
     datamodel = SQLAInterface(Application)
     related_view = [UserApplicationView]
+    list_columns = ['name']
 
 appbuilder.add_view(
     ApplicationView,
@@ -54,7 +64,13 @@ appbuilder.add_view(
 
 appbuilder.add_view(
     UserApplicationView,
-    "User Application",
+    "User Applicationn",
+    category = "application",
+)
+
+appbuilder.add_view(
+    DeviceView,
+    "Device application",
     category = "application",
 )
 
